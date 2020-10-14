@@ -51,18 +51,29 @@ func main() {
 	// Generate a selection of rate limits with random limits
 	var rateLimits []*guber.RateLimitReq
 
-	for i := 0; i < 2000; i++ {
+	/* for i := 0; i < 2000; i++ {*/
+	//rateLimits = append(rateLimits, &guber.RateLimitReq{
+	//Name:      fmt.Sprintf("ID-%d", i),
+	//UniqueKey: guber.RandomString(10),
+	//Hits:      1,
+	//Limit:     randInt(1, 10),
+	//Duration:  randInt(int(time.Millisecond*500), int(time.Second*6)),
+	//Algorithm: guber.Algorithm_TOKEN_BUCKET,
+	//})
+	/*}*/
+	for i := 0; i < 2; i++ {
 		rateLimits = append(rateLimits, &guber.RateLimitReq{
-			Name:      fmt.Sprintf("ID-%d", i),
-			UniqueKey: guber.RandomString(10),
+			Name:      "1",
+			UniqueKey: "test",
 			Hits:      1,
-			Limit:     randInt(1, 10),
-			Duration:  randInt(int(time.Millisecond*500), int(time.Second*6)),
+			Limit:     1000,
+			Duration:  int64(time.Second * 5),
 			Algorithm: guber.Algorithm_TOKEN_BUCKET,
+			Behavior:  guber.Behavior_GLOBAL,
 		})
 	}
 
-	fan := syncutil.NewFanOut(10)
+	fan := syncutil.NewFanOut(1)
 	for {
 		for _, rateLimit := range rateLimits {
 			fan.Run(func(obj interface{}) error {
@@ -76,6 +87,8 @@ func main() {
 				cancel()
 
 				if resp.Responses[0].Status == guber.Status_OVER_LIMIT {
+					spew.Dump(resp)
+				} else {
 					spew.Dump(resp)
 				}
 				return nil

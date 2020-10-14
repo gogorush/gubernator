@@ -255,8 +255,8 @@ func (s *Instance) UpdatePeerGlobals(ctx context.Context, r *UpdatePeerGlobalsRe
 	s.conf.Cache.Lock()
 	defer s.conf.Cache.Unlock()
 
-	log.Errorf("try to UpdatePeerGlobals:%s", r.Globals[0].Key)
 	for _, g := range r.Globals {
+		log.Errorf("try to UpdatePeerGlobals:%s", g.Key)
 		s.conf.Cache.Add(&CacheItem{
 			ExpireAt:  g.Status.ResetTime,
 			Algorithm: g.Algorithm,

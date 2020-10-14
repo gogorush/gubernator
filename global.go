@@ -169,6 +169,7 @@ func (gm *globalManager) runBroadcasts() {
 
 			// Send the hits if we reached our batch limit
 			if len(updates) == gm.conf.GlobalBatchLimit {
+				log.Errorf("runBroadcasts reach batch limit")
 				gm.updatePeers(updates)
 				updates = make(map[string]*RateLimitReq)
 				return true
@@ -182,6 +183,7 @@ func (gm *globalManager) runBroadcasts() {
 
 		case <-interval.C:
 			if len(updates) != 0 {
+				log.Errorf("runBroadcasts reach interval")
 				gm.updatePeers(updates)
 				updates = make(map[string]*RateLimitReq)
 			}
@@ -202,6 +204,7 @@ func (gm *globalManager) updatePeers(updates map[string]*RateLimitReq) {
 		rl := *r
 		// We are only sending the status of the rate limit so
 		// we clear the behavior flag so we don't get queued for update again.
+		log.Errorf("updatePeers rate_limit: %+v", rl)
 		SetBehavior(&rl.Behavior, Behavior_GLOBAL, false)
 		rl.Hits = 0
 

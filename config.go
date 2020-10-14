@@ -87,7 +87,7 @@ func (c *Config) SetDefaults() error {
 	setter.SetDefault(&c.Behaviors.BatchLimit, maxBatchSize)
 	setter.SetDefault(&c.Behaviors.BatchWait, time.Microsecond*500)
 
-	setter.SetDefault(&c.Behaviors.GlobalTimeout, time.Millisecond*500)
+	setter.SetDefault(&c.Behaviors.GlobalTimeout, time.Second*5)
 	setter.SetDefault(&c.Behaviors.GlobalBatchLimit, maxBatchSize)
 	setter.SetDefault(&c.Behaviors.GlobalSyncWait, time.Microsecond*500)
 
