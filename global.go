@@ -129,6 +129,7 @@ func (gm *globalManager) sendHits(hits map[string]*RateLimitReq) {
 			continue
 		}
 
+		log.Errorf("sendHits peer info:%v", peer.info)
 		p, ok := peerRequests[peer.info.Address]
 		if ok {
 			p.req.Requests = append(p.req.Requests, r)
@@ -140,6 +141,7 @@ func (gm *globalManager) sendHits(hits map[string]*RateLimitReq) {
 		}
 	}
 
+	log.Errorf("length of requests: %d", len(peerRequests))
 	// Send the rate limit requests to their respective owning peers.
 	for _, p := range peerRequests {
 		ctx, cancel := context.WithTimeout(context.Background(), gm.conf.GlobalTimeout)

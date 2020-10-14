@@ -167,6 +167,7 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 
 				// If our server instance is the owner of this rate limit
 				if peer.info.IsOwner {
+					log.Errorf("is owner of %s", peer.info.Address)
 					// Apply our rate limit algorithm to the request
 					inOut.Out, err = s.getRateLimit(inOut.In)
 					if err != nil {
@@ -175,11 +176,13 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 						}
 					}
 				} else {
+					log.Errorf("not owner of %s", peer.info.Address)
 					if HasBehavior(inOut.In.Behavior, Behavior_GLOBAL) {
 						inOut.Out, err = s.getGlobalRateLimit(inOut.In)
 						if err != nil {
 							inOut.Out = &RateLimitResp{Error: err.Error()}
 						}
+						log.Errorf("get from cache %v", inOut.Out)
 
 						// Inform the client of the owner key of the key
 						inOut.Out.Metadata = map[string]string{"owner": peer.info.Address}
@@ -252,6 +255,7 @@ func (s *Instance) UpdatePeerGlobals(ctx context.Context, r *UpdatePeerGlobalsRe
 	s.conf.Cache.Lock()
 	defer s.conf.Cache.Unlock()
 
+	log.Errorf("try to UpdatePeerGlobals:%s", r.Globals[0].Key)
 	for _, g := range r.Globals {
 		s.conf.Cache.Add(&CacheItem{
 			ExpireAt:  g.Status.ResetTime,
