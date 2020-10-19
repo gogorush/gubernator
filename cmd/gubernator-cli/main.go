@@ -61,15 +61,15 @@ func main() {
 	//Algorithm: guber.Algorithm_TOKEN_BUCKET,
 	//})
 	/*}*/
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 100; i++ {
 		rateLimits = append(rateLimits, &guber.RateLimitReq{
 			Name:      "1",
 			UniqueKey: "test",
 			Hits:      1,
-			Limit:     1000,
-			Duration:  int64(time.Second * 5),
+			Limit:     1000000,
+			Duration:  int64(time.Hour * 1),
 			Algorithm: guber.Algorithm_TOKEN_BUCKET,
-			Behavior:  guber.Behavior_GLOBAL,
+			//Behavior:  guber.Behavior_GLOBAL,
 		})
 	}
 

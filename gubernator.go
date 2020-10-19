@@ -167,7 +167,7 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 
 				// If our server instance is the owner of this rate limit
 				if peer.info.IsOwner {
-					log.Errorf("is owner of %s", peer.info.Address)
+					log.Info("owner of %+v", peer.info)
 					// Apply our rate limit algorithm to the request
 					inOut.Out, err = s.getRateLimit(inOut.In)
 					if err != nil {
@@ -176,7 +176,7 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 						}
 					}
 				} else {
-					log.Errorf("not owner of %s", peer.info.Address)
+					log.Info("not owner of %s", peer.info.Address)
 					if HasBehavior(inOut.In.Behavior, Behavior_GLOBAL) {
 						inOut.Out, err = s.getGlobalRateLimit(inOut.In)
 						if err != nil {

@@ -88,6 +88,7 @@ func (gm *globalManager) runAsyncHits() {
 
 			// Send the hits if we reached our batch limit
 			if len(hits) == gm.conf.GlobalBatchLimit {
+				log.Info("runAsyncHits reach limit")
 				gm.sendHits(hits)
 				hits = make(map[string]*RateLimitReq)
 				return true
@@ -101,6 +102,7 @@ func (gm *globalManager) runAsyncHits() {
 
 		case <-interval.C:
 			if len(hits) != 0 {
+				log.Info("runAsyncHits reach interval")
 				gm.sendHits(hits)
 				hits = make(map[string]*RateLimitReq)
 			}
@@ -129,7 +131,6 @@ func (gm *globalManager) sendHits(hits map[string]*RateLimitReq) {
 			continue
 		}
 
-		log.Errorf("sendHits peer info:%v", peer.info)
 		p, ok := peerRequests[peer.info.Address]
 		if ok {
 			p.req.Requests = append(p.req.Requests, r)
@@ -144,6 +145,7 @@ func (gm *globalManager) sendHits(hits map[string]*RateLimitReq) {
 	log.Errorf("length of requests: %d", len(peerRequests))
 	// Send the rate limit requests to their respective owning peers.
 	for _, p := range peerRequests {
+		log.Info("sendHits peer info:%v", p.client.info)
 		ctx, cancel := context.WithTimeout(context.Background(), gm.conf.GlobalTimeout)
 		_, err := p.client.GetPeerRateLimits(ctx, &p.req)
 		cancel()

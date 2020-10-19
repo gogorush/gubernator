@@ -148,6 +148,7 @@ func confFromEnv() (ServerConfig, error) {
 			}
 			if fn, ok := hashFuncs[hash]; ok {
 				conf.Picker = gubernator.NewConsistantHash(fn)
+				return conf, nil
 			}
 			return conf, errors.Errorf("'GUBER_PEER_PICKER_HASH=%s' is invalid; choices are [%s]",
 				hash, validHashKeys(hashFuncs))
