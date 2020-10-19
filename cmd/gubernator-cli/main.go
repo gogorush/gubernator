@@ -69,7 +69,7 @@ func main() {
 			Limit:     1000000,
 			Duration:  int64(time.Hour * 1),
 			Algorithm: guber.Algorithm_TOKEN_BUCKET,
-			//Behavior:  guber.Behavior_GLOBAL,
+			Behavior:  guber.Behavior_GLOBAL,
 		})
 	}
 
