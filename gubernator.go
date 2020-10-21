@@ -165,6 +165,7 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 					return nil
 				}
 
+				log.Info("peer client address in charge is %s", peer.info.Address)
 				// If our server instance is the owner of this rate limit
 				if peer.info.IsOwner {
 					log.Info("owner of %+v", peer.info)

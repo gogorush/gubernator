@@ -79,7 +79,7 @@ func (ch *ConsistantHash) GetByPeerInfo(peer PeerInfo) *PeerClient {
 	return ch.peerMap[int(ch.hashFunc(strToBytesUnsafe(peer.HashKey())))]
 }
 
-// Given a key, return the peer that key is assigned too
+// Given a key, return the peer that key is assigned to
 func (ch *ConsistantHash) Get(key string) (*PeerClient, error) {
 	if ch.Size() == 0 {
 		return nil, errors.New("unable to pick a peer; pool is empty")
