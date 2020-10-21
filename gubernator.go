@@ -166,7 +166,6 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 				}
 
 				log.Info("peer client address in charge is %s", peer.info.Address)
-			isOwner:
 				// If our server instance is the owner of this rate limit
 				if peer.info.IsOwner {
 					log.Info("owner of %+v", peer.info)
@@ -194,7 +193,14 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 					}
 
 					if s.conf.LocalIP == peer.info.Address {
-						goto isOwner
+						log.Infof("still owner of %+v", peer.info)
+						// Apply our rate limit algorithm to the request
+						inOut.Out, err = s.getRateLimit(inOut.In)
+						if err != nil {
+							inOut.Out = &RateLimitResp{
+								Error: fmt.Sprintf("while applying rate limit for '%s' - '%s'", globalKey, err),
+							}
+						}
 					}
 					// Make an RPC call to the peer that owns this rate limit
 					inOut.Out, err = peer.GetPeerRateLimit(ctx, inOut.In)
