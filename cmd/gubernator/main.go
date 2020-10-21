@@ -67,6 +67,7 @@ func main() {
 		GRPCServer:  grpcSrv,
 		Cache:       cache,
 		DataCenter:  conf.DataCenter,
+		LocalIP:     conf.GRPCListenAddress,
 	})
 	checkErr(err, "while creating new gubernator instance")
 

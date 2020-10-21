@@ -57,6 +57,7 @@ type Config struct {
 	// deciding who we should immediately connect too for our local picker. Should remain empty if not
 	// using multi data center support.
 	DataCenter string
+	LocalIP    string
 }
 
 type BehaviorConfig struct {
