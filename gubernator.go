@@ -198,6 +198,7 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 					for _, a := range addrs {
 						if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 							if ipnet.IP.To4() != nil && ipnet.IP.String() == peer.info.Address {
+								log.Info("jump to internal call")
 								goto isOwner
 							}
 						}
