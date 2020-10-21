@@ -19,6 +19,7 @@ package gubernator
 import (
 	"context"
 	"fmt"
+	"net"
 	"strings"
 	"sync"
 
@@ -166,6 +167,7 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 				}
 
 				log.Info("peer client address in charge is %s", peer.info.Address)
+			isOwner:
 				// If our server instance is the owner of this rate limit
 				if peer.info.IsOwner {
 					log.Info("owner of %+v", peer.info)
@@ -192,6 +194,14 @@ func (s *Instance) GetRateLimits(ctx context.Context, r *GetRateLimitsReq) (*Get
 						return nil
 					}
 
+					addrs, _ := net.InterfaceAddrs()
+					for _, a := range addrs {
+						if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+							if ipnet.IP.To4() != nil && ipnet.IP.String() == peer.info.Address {
+								goto isOwner
+							}
+						}
+					}
 					// Make an RPC call to the peer that owns this rate limit
 					inOut.Out, err = peer.GetPeerRateLimit(ctx, inOut.In)
 					if err != nil {
