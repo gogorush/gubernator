@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.2] - 2020-10-23
+### Change
+* ETCD discovery now sets the IsOwner property when updating the peers list.
+
+## [0.9.1] - 2020-10-19
+### Change
+* Fix GUBER_PEER_PICKER_HASH and GUBER_PEER_PICKER
+* Now warns if GUBER_PEER_PICKER value is incorrect
+* Now ignoring spaces between `key = value` in config file
+
+## [0.9.0] - 2020-10-13
+### Change
+* Fix GUBER_MEMBERLIST_ADVERTISE_PORT value type
+* Fixed race condition and updated tests for limit change
+* Fix limit change not having effect until reset
+
 ## [0.8.0] - 2020-01-04
 ### Added
 * Allow cache users to invalidate a ratelimit after a specific time

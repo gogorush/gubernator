@@ -69,11 +69,12 @@ func tokenBucket(s Store, c Cache, r *RateLimitReq) (resp *RateLimitResp, err er
 
 		// Update the limit if it changed
 		if t.Limit != r.Limit {
-			t.Limit = r.Limit
-			// If our remaining is greater than our new limit
-			if t.Remaining > t.Limit {
-				t.Remaining = t.Limit
+			// Add difference to remaining
+			t.Remaining += r.Limit - t.Limit
+			if t.Remaining < 0 {
+				t.Remaining = 0
 			}
+			t.Limit = r.Limit
 		}
 
 		rl := &RateLimitResp{
@@ -211,7 +212,7 @@ func leakyBucket(s Store, c Cache, r *RateLimitReq) (resp *RateLimitResp, err er
 		b.Duration = r.Duration
 
 		duration := r.Duration
-		rate := duration / r.Limit
+		rate := float64(duration) / float64(r.Limit)
 		if HasBehavior(r.Behavior, Behavior_DURATION_IS_GREGORIAN) {
 			d, err := GregorianDuration(time.Now(), r.Duration)
 			if err != nil {
@@ -225,14 +226,14 @@ func leakyBucket(s Store, c Cache, r *RateLimitReq) (resp *RateLimitResp, err er
 
 			// Calculate the rate using the entire duration of the gregorian interval
 			// IE: Minute = 60,000 milliseconds, etc.. etc..
-			rate = d / r.Limit
+			rate = float64(d) / float64(r.Limit)
 			// Update the duration to be the end of the gregorian interval
 			duration = expire - (n.UnixNano() / 1000000)
 		}
 
 		// Calculate how much leaked out of the bucket since the last hit
 		elapsed := now - b.UpdatedAt
-		leak := int64(elapsed / rate)
+		leak := int64(float64(elapsed) / rate)
 
 		b.Remaining += leak
 		if b.Remaining > b.Limit {
@@ -243,7 +244,7 @@ func leakyBucket(s Store, c Cache, r *RateLimitReq) (resp *RateLimitResp, err er
 			Limit:     b.Limit,
 			Remaining: b.Remaining,
 			Status:    Status_UNDER_LIMIT,
-			ResetTime: now + rate,
+			ResetTime: now + int64(rate),
 		}
 
 		if s != nil {
